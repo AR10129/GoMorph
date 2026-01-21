@@ -1,0 +1,60 @@
+# Documentation (local reference only)
+ARCHITECTURE_FLOWCHART.md
+PROJECT_BLUEPRINT.md
+QUICK_START.md
+
+# Environment variables
+.env
+*.env
+!.env.example
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+vendor/
+tmp/
+backend/tmp/
+
+# Node
+node_modules/
+dist/
+build/
+.cache/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+frontend/dist/
+frontend/.vite/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Uploads (local development)
+uploads/
+converted/
