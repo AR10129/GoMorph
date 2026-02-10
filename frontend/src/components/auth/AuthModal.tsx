@@ -24,6 +24,11 @@ export function AuthModal({ isOpen, onClose, onSuccess, initialMode = 'signup' }
   });
   const { login } = useAuth();
 
+  useEffect(() => {
+    setIsSignUp(initialMode === 'signup');
+    setError('');
+  }, [initialMode, isOpen]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
