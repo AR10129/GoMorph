@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/AR10129/GoMorph/backend/internal/database"
+	"github.com/AR10129/GoMorph/backend/internal/models"
 	"github.com/AR10129/GoMorph/backend/internal/services"
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +20,7 @@ func NewAuthHandler() *AuthHandler {
 }
 
 type RegisterRequest struct {
+	Username string `json:"username" binding:"required,min=3"`
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=8"`
 }
@@ -43,7 +46,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
-	user, err := h.authService.Register(req.Email, req.Password)
+	user, err := h.authService.Register(req.Username, req.Email, req.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -52,8 +55,9 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "User registered successfully",
 		"user": gin.H{
-			"id":    user.ID,
-			"email": user.Email,
+			"id":       user.ID,
+			"username": user.Username,
+			"email":    user.Email,
 		},
 	})
 }
@@ -83,8 +87,9 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,
 		"user": gin.H{
-			"id":    user.ID,
-			"email": user.Email,
+			"id":       user.ID,
+			"username": user.Username,
+			"email":    user.Email,
 		},
 	})
 }
@@ -99,7 +104,15 @@ func (h *AuthHandler) Login(c *gin.Context) {
 func (h *AuthHandler) GetProfile(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 
+	var user models.User
+	if err := database.DB.Where("id = ?", userID).First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"user_id": userID,
+		"user_id":  user.ID,
+		"username": user.Username,
+		"email":    user.Email,
 	})
 }

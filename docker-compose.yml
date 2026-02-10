@@ -5,15 +5,15 @@ services:
     image: postgres:14-alpine
     container_name: gomorph_postgres
     environment:
-      POSTGRES_USER: gomorph_user
-      POSTGRES_PASSWORD: gomorph_password
-      POSTGRES_DB: gomorph_db
+      POSTGRES_USER: ${POSTGRES_USER:-gomorph_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gomorph_password}
+      POSTGRES_DB: ${POSTGRES_DB:-gomorph_db}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U gomorph_user"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-gomorph_user}"]
       interval: 10s
       timeout: 5s
       retries: 5

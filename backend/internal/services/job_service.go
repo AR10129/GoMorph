@@ -24,8 +24,6 @@ type JobTask struct {
 	InputS3Key   string                 `json:"input_s3_key"`
 	InputFormat  string                 `json:"input_format"`
 	OutputFormat string                 `json:"output_format"`
-	WatermarkEnabled bool `json:"watermark_enabled"`
-	WatermarkConfig  string `json:"watermark_config"`
 	Settings     map[string]interface{} `json:"settings"`
 	CreatedAt    time.Time              `json:"created_at"`
 }
@@ -39,15 +37,13 @@ func NewJobService(redisClient *redis.Client) *JobService {
 // EnqueueJob adds a job to the Redis queue
 func (s *JobService) EnqueueJob(ctx context.Context, job *models.Job) error {
 	task := JobTask{
-		JobID:            job.ID,
-		UserID:           job.UserID,
-		InputS3Key:       job.OriginalS3Key,
-		InputFormat:      job.InputFormat,
-		OutputFormat:     job.OutputFormat,
-		WatermarkEnabled: job.WatermarkEnabled,
-		WatermarkConfig:  job.WatermarkConfig,
-		Settings:         make(map[string]interface{}),
-		CreatedAt:        job.CreatedAt,
+		JobID:        job.ID,
+		UserID:       job.UserID,
+		InputS3Key:   job.OriginalS3Key,
+		InputFormat:  job.InputFormat,
+		OutputFormat: job.OutputFormat,
+		Settings:     make(map[string]interface{}),
+		CreatedAt:    job.CreatedAt,
 	}
 
 	taskData, err := json.Marshal(task)
@@ -84,8 +80,8 @@ func (s *JobService) DequeueJob(ctx context.Context) (*JobTask, error) {
 // UpdateJobStatus updates job status in database
 func (s *JobService) UpdateJobStatus(ctx context.Context, jobID uuid.UUID, status models.JobStatus, convertedS3Key string, errorMsg string) error {
 	updates := map[string]interface{}{
-		"status":      status,
-		"updated_at":  time.Now(),
+		"status":     status,
+		"updated_at": time.Now(),
 	}
 
 	if convertedS3Key != "" {

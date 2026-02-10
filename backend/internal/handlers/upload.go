@@ -29,11 +29,11 @@ func NewUploadHandler(s3Storage *storage.S3Storage, jobService *services.JobServ
 }
 
 var AllowedFormats = map[string][]string{
-	"image":    {"png", "jpg", "jpeg", "webp", "gif", "bmp", "tiff", "svg", "ico", "heic"},
-	"video":    {"mp4", "avi", "mov", "mkv", "webm", "flv", "wmv", "m4v"},
-	"audio":    {"mp3", "wav", "aac", "flac", "ogg", "m4a", "wma", "aiff"},
-	"document": {"pdf", "docx", "doc", "txt", "rtf", "odt", "html", "md"},
-	"archive":  {"zip", "rar", "tar", "gz", "7z", "bz2"},
+	"image":    {"png", "jpg", "webp", "gif", "svg"},
+	"video":    {"mp4", "avi", "mov", "mkv", "webm"},
+	"audio":    {"mp3", "wav", "flac", "aac", "ogg"},
+	"document": {"pdf", "docx", "txt", "rtf", "odt"},
+	"archive":  {"zip", "rar", "7z", "tar", "gzip"},
 }
 
 // Upload godoc
@@ -43,8 +43,6 @@ var AllowedFormats = map[string][]string{
 // @Produce json
 // @Param file formData file true "File to convert"
 // @Param output_format formData string true "Output format"
-// @Param watermark_enabled formData boolean false "Enable watermark"
-// @Param watermark_text formData string false "Watermark text"
 // @Success 200 {object} map[string]interface{}
 // @Security BearerAuth
 // @Router /api/upload [post]
@@ -115,8 +113,6 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 		OriginalFilename: file.Filename,
 		OriginalS3Key:    s3Key,
 		FileSizeBytes:    file.Size,
-		WatermarkEnabled: c.PostForm("watermark_enabled") == "true",
-		WatermarkConfig:  c.PostForm("watermark_config"),
 	}
 
 	if err := database.DB.Create(job).Error; err != nil {

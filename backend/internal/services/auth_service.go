@@ -19,10 +19,10 @@ func NewAuthService() *AuthService {
 }
 
 // Register creates a new user
-func (s *AuthService) Register(email, password string) (*models.User, error) {
+func (s *AuthService) Register(username, email, password string) (*models.User, error) {
 	// Check if user already exists
 	var existingUser models.User
-	if err := database.DB.Where("email = ?", email).First(&existingUser).Error; err == nil {
+	if err := database.DB.Where("email = ? OR username = ?", email, username).First(&existingUser).Error; err == nil {
 		return nil, errors.New("user already exists")
 	}
 
@@ -33,6 +33,7 @@ func (s *AuthService) Register(email, password string) (*models.User, error) {
 	}
 
 	user := &models.User{
+		Username: username,
 		Email:    email,
 		Password: string(hashedPassword),
 	}
