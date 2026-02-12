@@ -30,6 +30,10 @@ A full-stack file conversion platform built with Go and React. Upload files in o
 
 ![Landing Page - Scrolled](docs/screenshots/landing-page-scroll.png)
 
+**Signup**
+
+![Signup](docs/screenshots/signup-window.png)
+
 **Conversion Workspace**
 
 ![Conversion Workspace](docs/screenshots/conversion-workspace.png)
@@ -38,9 +42,7 @@ A full-stack file conversion platform built with Go and React. Upload files in o
 
 ![Conversion History](docs/screenshots/conversion-history.png)
 
-**Signup**
 
-![Signup](docs/screenshots/signup-window.png)
 
 ## Project Structure
 
