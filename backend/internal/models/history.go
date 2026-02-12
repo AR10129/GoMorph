@@ -8,7 +8,7 @@ import (
 )
 
 type ConversionHistory struct {
-	ID                    uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
+	ID                    uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
 	UserID                uuid.UUID `gorm:"type:uuid;not null;index" json:"user_id"`
 	JobID                 uuid.UUID `gorm:"type:uuid;not null" json:"job_id"`
 	InputFormat           string    `gorm:"type:varchar(10)" json:"input_format"`

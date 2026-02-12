@@ -17,7 +17,7 @@ const (
 )
 
 type Job struct {
-	ID               uuid.UUID  `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
+	ID               uuid.UUID  `gorm:"type:uuid;primaryKey" json:"id"`
 	UserID           uuid.UUID  `gorm:"type:uuid;not null;index" json:"user_id"`
 	Status           JobStatus  `gorm:"type:varchar(50);not null;index" json:"status"`
 	InputFormat      string     `gorm:"type:varchar(10);not null" json:"input_format"`

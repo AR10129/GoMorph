@@ -1,0 +1,12 @@
+.env
+bin/
+scripts/
+**/*.exe
+**/*.test
+**/*.out
+.git/
+.vscode/
+node_modules/
+dist/
+docs/
+frontend/

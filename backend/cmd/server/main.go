@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/AR10129/GoMorph/backend/internal/config"
@@ -33,11 +34,20 @@ func main() {
 
 	// Initialize Redis client
 	log.Println("Connecting to Redis...")
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     config.AppConfig.RedisURL,
-		Password: "",
-		DB:       0,
-	})
+	var redisClient *redis.Client
+	if strings.HasPrefix(config.AppConfig.RedisURL, "redis://") || strings.HasPrefix(config.AppConfig.RedisURL, "rediss://") {
+		opt, err := redis.ParseURL(config.AppConfig.RedisURL)
+		if err != nil {
+			log.Fatal("Failed to parse REDIS_URL:", err)
+		}
+		redisClient = redis.NewClient(opt)
+	} else {
+		redisClient = redis.NewClient(&redis.Options{
+			Addr:     config.AppConfig.RedisURL,
+			Password: config.AppConfig.RedisPassword,
+			DB:       0,
+		})
+	}
 
 	// Test Redis connection
 	ctx := context.Background()
@@ -61,7 +71,7 @@ func main() {
 	log.Println("Starting background worker...")
 	processor := worker.NewProcessor(redisClient, s3Storage, config.AppConfig)
 	workerCtx, workerCancel := context.WithCancel(context.Background())
-	
+
 	go processor.Start(workerCtx)
 	log.Println("Background worker started")
 
@@ -72,7 +82,7 @@ func main() {
 	// Start server in a goroutine
 	port := ":" + config.AppConfig.Port
 	log.Printf("Server starting on port %s", port)
-	
+
 	go func() {
 		if err := router.Run(port); err != nil {
 			log.Fatal("Failed to start server:", err)
@@ -82,14 +92,14 @@ func main() {
 	// Wait for shutdown signal
 	<-sigChan
 	log.Println("\n Shutting down gracefully...")
-	
+
 	// Cancel worker context
 	workerCancel()
-	
+
 	// Close Redis connection
 	if err := redisClient.Close(); err != nil {
 		log.Println("Error closing Redis connection:", err)
 	}
-	
+
 	log.Println(" Server stopped")
 }
