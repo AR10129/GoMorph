@@ -9,17 +9,18 @@ import (
 )
 
 type Config struct {
-	Port                string
-	DatabaseURL         string
-	RedisURL            string
-	JWTSecret           string
-	AWSRegion           string
-	AWSAccessKeyID      string
-	AWSSecretAccessKey  string
-	AWSS3Bucket         string
-	MaxFileSizeMB       int64
-	AllowedOrigins      string
-	WorkerConcurrency   int
+	Port               string
+	DatabaseURL        string
+	RedisURL           string
+	RedisPassword      string
+	JWTSecret          string
+	AWSRegion          string
+	AWSAccessKeyID     string
+	AWSSecretAccessKey string
+	AWSS3Bucket        string
+	MaxFileSizeMB      int64
+	AllowedOrigins     string
+	WorkerConcurrency  int
 }
 
 var AppConfig *Config
@@ -34,17 +35,18 @@ func Load() {
 	workerConcurrency, _ := strconv.Atoi(getEnv("WORKER_CONCURRENCY", "10"))
 
 	AppConfig = &Config{
-		Port:                getEnv("PORT", "8000"),
-		DatabaseURL:         getEnv("DATABASE_URL", ""),
-		RedisURL:            getEnv("REDIS_URL", "localhost:6379"),
-		JWTSecret:           getEnv("JWT_SECRET", ""),
-		AWSRegion:           getEnv("AWS_REGION", "us-east-1"),
-		AWSAccessKeyID:      getEnv("AWS_ACCESS_KEY_ID", ""),
-		AWSSecretAccessKey:  getEnv("AWS_SECRET_ACCESS_KEY", ""),
-		AWSS3Bucket:         getEnv("AWS_S3_BUCKET", ""),
-		MaxFileSizeMB:       maxSize,
-		AllowedOrigins:      getEnv("ALLOWED_ORIGINS", "http://localhost:5173"),
-		WorkerConcurrency:   workerConcurrency,
+		Port:               getEnv("PORT", "8000"),
+		DatabaseURL:        getEnv("DATABASE_URL", ""),
+		RedisURL:           getEnv("REDIS_URL", "localhost:6379"),
+		RedisPassword:      getEnv("REDIS_PASSWORD", ""),
+		JWTSecret:          getEnv("JWT_SECRET", ""),
+		AWSRegion:          getEnv("AWS_REGION", "us-east-1"),
+		AWSAccessKeyID:     getEnv("AWS_ACCESS_KEY_ID", ""),
+		AWSSecretAccessKey: getEnv("AWS_SECRET_ACCESS_KEY", ""),
+		AWSS3Bucket:        getEnv("AWS_S3_BUCKET", ""),
+		MaxFileSizeMB:      maxSize,
+		AllowedOrigins:     getEnv("ALLOWED_ORIGINS", "http://localhost:5173"),
+		WorkerConcurrency:  workerConcurrency,
 	}
 
 	// Validate required fields
