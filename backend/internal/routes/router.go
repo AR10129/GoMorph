@@ -1,8 +1,10 @@
 package routes
 
 import (
+	"strings"
 	"time"
 
+	"github.com/AR10129/GoMorph/backend/internal/config"
 	"github.com/AR10129/GoMorph/backend/internal/handlers"
 	"github.com/AR10129/GoMorph/backend/internal/middleware"
 	"github.com/AR10129/GoMorph/backend/internal/services"
@@ -14,10 +16,11 @@ import (
 
 func SetupRouter(s3Storage *storage.S3Storage, redisClient *redis.Client) *gin.Engine {
 	router := gin.Default()
+	allowedOrigins := parseAllowedOrigins(config.AppConfig.AllowedOrigins)
 
 	// CORS middleware
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8080", "http://localhost:5173", "http://localhost:3000"},
+		AllowOrigins:     allowedOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -78,4 +81,25 @@ func SetupRouter(s3Storage *storage.S3Storage, redisClient *redis.Client) *gin.E
 	})
 
 	return router
+}
+
+func parseAllowedOrigins(origins string) []string {
+	if strings.TrimSpace(origins) == "" {
+		return []string{"http://localhost:8080", "http://localhost:5173", "http://localhost:3000"}
+	}
+
+	parts := strings.Split(origins, ",")
+	allowed := make([]string, 0, len(parts))
+	for _, origin := range parts {
+		origin = strings.TrimSpace(origin)
+		if origin != "" {
+			allowed = append(allowed, origin)
+		}
+	}
+
+	if len(allowed) == 0 {
+		return []string{"http://localhost:8080", "http://localhost:5173", "http://localhost:3000"}
+	}
+
+	return allowed
 }
