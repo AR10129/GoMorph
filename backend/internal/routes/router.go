@@ -72,5 +72,10 @@ func SetupRouter(s3Storage *storage.S3Storage, redisClient *redis.Client) *gin.E
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
+	// Root endpoint
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{"service": "GoMorph backend", "status": "ok"})
+	})
+
 	return router
 }
